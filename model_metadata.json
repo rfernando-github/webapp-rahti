@@ -1,0 +1,48 @@
+{
+  "model_type": "DecisionTreeClassifier",
+  "hyperparameters": {
+    "max_depth": 5,
+    "min_samples_split": 10,
+    "min_samples_leaf": 5,
+    "criterion": "gini",
+    "random_state": 42
+  },
+  "feature_columns": [
+    "AgeinYr",
+    "gender",
+    "BMI",
+    "ap_hi",
+    "ap_lo",
+    "cholesterol",
+    "gluc",
+    "smoke",
+    "alco",
+    "active"
+  ],
+  "metrics": {
+    "accuracy": 0.7344,
+    "precision": 0.7612,
+    "recall": 0.6755,
+    "f1_score": 0.7158,
+    "roc_auc": 0.7929
+  },
+  "feature_importances": {
+    "AgeinYr": 0.1255,
+    "gender": 0.0,
+    "BMI": 0.0077,
+    "ap_hi": 0.7815,
+    "ap_lo": 0.0048,
+    "cholesterol": 0.0748,
+    "gluc": 0.0056,
+    "smoke": 0.0003,
+    "alco": 0.0,
+    "active": 0.0
+  },
+  "dataset": {
+    "total_records": 69960,
+    "records_after_cleaning": 68560,
+    "training_samples": 54848,
+    "test_samples": 13712
+  },
+  "training_date": "2026-02-14T21:19:40.155997"
+}

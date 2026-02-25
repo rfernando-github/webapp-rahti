@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}CardioRisk Predictor - Results{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+
+        <!-- Risk Result Banner -->
+        <div class="risk-banner {{ 'risk-high' if result.prediction == 1 else 'risk-low' }} text-center p-4 mb-4 rounded">
+            <h1 class="mb-2">{{ result.label }}</h1>
+            <p class="fs-5 mb-0">
+                CVD Probability: <strong>{{ result.probability_cvd }}%</strong>
+            </p>
+        </div>
+
+        <!-- Probability Bar -->
+        <div class="card mb-4">
+            <div class="card-header"><strong>Risk Probability</strong></div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-1">
+                    <span>Low Risk ({{ result.probability_no_cvd }}%)</span>
+                    <span>High Risk ({{ result.probability_cvd }}%)</span>
+                </div>
+                <div class="progress" style="height: 30px;">
+                    <div class="progress-bar bg-success" style="width: {{ result.probability_no_cvd }}%">
+                        {{ result.probability_no_cvd }}%
+                    </div>
+                    <div class="progress-bar bg-danger" style="width: {{ result.probability_cvd }}%">
+                        {{ result.probability_cvd }}%
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Summary -->
+        <div class="card mb-4">
+            <div class="card-header"><strong>Patient Summary</strong></div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-sm">
+                            <tr><td class="text-muted">Age</td><td>{{ form_data.age }} years</td></tr>
+                            <tr><td class="text-muted">Gender</td><td>{{ 'Female' if form_data.gender == '1' else 'Male' }}</td></tr>
+                            <tr><td class="text-muted">Height</td><td>{{ form_data.height }} cm</td></tr>
+                            <tr><td class="text-muted">Weight</td><td>{{ form_data.weight }} kg</td></tr>
+                            <tr><td class="text-muted">BMI</td><td>{{ result.bmi }}</td></tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-sm">
+                            <tr><td class="text-muted">Systolic BP</td><td>{{ form_data.ap_hi }} mmHg</td></tr>
+                            <tr><td class="text-muted">Diastolic BP</td><td>{{ form_data.ap_lo }} mmHg</td></tr>
+                            <tr><td class="text-muted">Cholesterol</td><td>{{ {1: 'Normal', 2: 'Above Normal', 3: 'High'}[form_data.cholesterol|int] }}</td></tr>
+                            <tr><td class="text-muted">Glucose</td><td>{{ {1: 'Normal', 2: 'Above Normal', 3: 'High'}[form_data.gluc|int] }}</td></tr>
+                            <tr><td class="text-muted">Smoking</td><td>{{ 'Yes' if form_data.smoke == '1' else 'No' }}</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decision Path (Explainability) -->
+        {% if result.decision_path %}
+        <div class="card mb-4">
+            <div class="card-header"><strong>Decision Path (How the model decided)</strong></div>
+            <div class="card-body">
+                <ol class="mb-0">
+                    {% for rule in result.decision_path %}
+                    <li>
+                        <strong>{{ rule.feature }}</strong> = {{ rule.value }}
+                        {{ rule.direction }} {{ rule.threshold }}
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Feature Importance -->
+        <div class="card mb-4">
+            <div class="card-header"><strong>Feature Importance (Model-wide)</strong></div>
+            <div class="card-body">
+                {% for item in result.feature_importance %}
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between">
+                        <span>{{ item.feature }}</span>
+                        <span>{{ (item.importance * 100)|round(1) }}%</span>
+                    </div>
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar importance-bar" style="width: {{ item.importance * 100 }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="alert alert-warning">
+            <strong>Important:</strong> This prediction is based on a machine learning screening tool
+            and should not be used as a medical diagnosis. Please consult a qualified healthcare
+            professional for proper evaluation and advice.
+        </div>
+
+        <a href="/" class="btn btn-outline-primary btn-lg w-100">New Assessment</a>
+    </div>
+</div>
+{% endblock %}

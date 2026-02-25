@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}CardioRisk Predictor - About Model{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h2 class="mb-3">About the Model</h2>
+
+        <!-- Model Overview -->
+        <div class="card mb-4">
+            <div class="card-header"><strong>Model Overview</strong></div>
+            <div class="card-body">
+                <table class="table table-bordered mb-0">
+                    <tr><td class="text-muted" style="width:40%">Model Type</td><td>{{ metadata.model_type }}</td></tr>
+                    <tr><td class="text-muted">Max Depth</td><td>{{ metadata.hyperparameters.max_depth }}</td></tr>
+                    <tr><td class="text-muted">Criterion</td><td>{{ metadata.hyperparameters.criterion | capitalize }}</td></tr>
+                    <tr><td class="text-muted">Min Samples Split</td><td>{{ metadata.hyperparameters.min_samples_split }}</td></tr>
+                    <tr><td class="text-muted">Min Samples Leaf</td><td>{{ metadata.hyperparameters.min_samples_leaf }}</td></tr>
+                    <tr><td class="text-muted">Training Date</td><td>{{ metadata.training_date[:10] }}</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="card mb-4">
+            <div class="card-header"><strong>Performance Metrics (Test Set)</strong></div>
+            <div class="card-body">
+                <table class="table table-bordered mb-0">
+                    <thead class="table-light">
+                        <tr><th>Metric</th><th>Value</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Accuracy</td><td>{{ (metadata.metrics.accuracy * 100)|round(2) }}%</td></tr>
+                        <tr><td>Precision</td><td>{{ (metadata.metrics.precision * 100)|round(2) }}%</td></tr>
+                        <tr><td>Recall</td><td>{{ (metadata.metrics.recall * 100)|round(2) }}%</td></tr>
+                        <tr><td>F1 Score</td><td>{{ (metadata.metrics.f1_score * 100)|round(2) }}%</td></tr>
+                        <tr><td>ROC AUC</td><td>{{ metadata.metrics.roc_auc }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Dataset Info -->
+        <div class="card mb-4">
+            <div class="card-header"><strong>Dataset Information</strong></div>
+            <div class="card-body">
+                <table class="table table-bordered mb-0">
+                    <tr><td class="text-muted" style="width:40%">Source</td><td>Kaggle Health Screening Data</td></tr>
+                    <tr><td class="text-muted">Total Records</td><td>{{ "{:,}".format(metadata.dataset.total_records) }}</td></tr>
+                    <tr><td class="text-muted">After Cleaning</td><td>{{ "{:,}".format(metadata.dataset.records_after_cleaning) }}</td></tr>
+                    <tr><td class="text-muted">Training Samples</td><td>{{ "{:,}".format(metadata.dataset.training_samples) }}</td></tr>
+                    <tr><td class="text-muted">Test Samples</td><td>{{ "{:,}".format(metadata.dataset.test_samples) }}</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Feature Importance -->
+        <div class="card mb-4">
+            <div class="card-header"><strong>Feature Importance</strong></div>
+            <div class="card-body">
+                {% for feature, importance in metadata.feature_importances.items() | sort(attribute='1', reverse=true) %}
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between">
+                        <span>{{ feature }}</span>
+                        <span>{{ (importance * 100)|round(1) }}%</span>
+                    </div>
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar importance-bar" style="width: {{ importance * 100 }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Architecture -->
+        <div class="card mb-4">
+            <div class="card-header"><strong>System Architecture</strong></div>
+            <div class="card-body">
+                <p>The CardioRisk Predictor follows a modular architecture with 6 components:</p>
+                <ol>
+                    <li><strong>User Interface Module</strong> &mdash; Web form for patient data entry</li>
+                    <li><strong>API Layer</strong> &mdash; Flask routes handling HTTP requests</li>
+                    <li><strong>Input Validator</strong> &mdash; Range and type validation for all inputs</li>
+                    <li><strong>Feature Extractor</strong> &mdash; Computes derived features (e.g., BMI from height/weight)</li>
+                    <li><strong>Model Service</strong> &mdash; Decision Tree classifier for CVD risk prediction</li>
+                    <li><strong>Explainability Module</strong> &mdash; Decision path and feature importance explanations</li>
+                </ol>
+            </div>
+        </div>
+
+        <a href="/" class="btn btn-outline-primary btn-lg w-100">Back to Prediction</a>
+    </div>
+</div>
+{% endblock %}

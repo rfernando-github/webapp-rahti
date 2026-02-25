@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}CardioRisk Predictor - Health Screening{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h2 class="mb-3">Cardiovascular Disease Risk Assessment</h2>
+        <p class="text-muted">Enter patient health screening data below to predict CVD risk.</p>
+
+        {% if errors %}
+        <div class="alert alert-danger">
+            <strong>Please fix the following errors:</strong>
+            <ul class="mb-0 mt-1">
+                {% for error in errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <form method="POST" action="/predict">
+            <div class="card mb-4">
+                <div class="card-header"><strong>Demographics</strong></div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="age" class="form-label">Age (years)</label>
+                            <input type="number" class="form-control" id="age" name="age"
+                                   min="1" max="120" required
+                                   value="{{ form_data.age if form_data else '' }}"
+                                   placeholder="e.g. 50">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="gender" class="form-label">Gender</label>
+                            <select class="form-select" id="gender" name="gender" required>
+                                <option value="" disabled {{ 'selected' if not form_data or not form_data.gender }}>Select...</option>
+                                <option value="1" {{ 'selected' if form_data and form_data.gender == '1' }}>Female</option>
+                                <option value="0" {{ 'selected' if form_data and form_data.gender == '0' }}>Male</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="height" class="form-label">Height (cm)</label>
+                            <input type="number" class="form-control" id="height" name="height"
+                                   min="100" max="220" required
+                                   value="{{ form_data.height if form_data else '' }}"
+                                   placeholder="e.g. 170">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="weight" class="form-label">Weight (kg)</label>
+                            <input type="number" class="form-control" id="weight" name="weight"
+                                   min="30" max="200" step="0.1" required
+                                   value="{{ form_data.weight if form_data else '' }}"
+                                   placeholder="e.g. 75">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header"><strong>Blood Pressure</strong></div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="ap_hi" class="form-label">Systolic BP (mmHg)</label>
+                            <input type="number" class="form-control" id="ap_hi" name="ap_hi"
+                                   min="90" max="250" required
+                                   value="{{ form_data.ap_hi if form_data else '' }}"
+                                   placeholder="e.g. 120">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="ap_lo" class="form-label">Diastolic BP (mmHg)</label>
+                            <input type="number" class="form-control" id="ap_lo" name="ap_lo"
+                                   min="40" max="150" required
+                                   value="{{ form_data.ap_lo if form_data else '' }}"
+                                   placeholder="e.g. 80">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header"><strong>Lab Results</strong></div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="cholesterol" class="form-label">Cholesterol Level</label>
+                            <select class="form-select" id="cholesterol" name="cholesterol" required>
+                                <option value="" disabled {{ 'selected' if not form_data or not form_data.cholesterol }}>Select...</option>
+                                <option value="1" {{ 'selected' if form_data and form_data.cholesterol == '1' }}>1 - Normal</option>
+                                <option value="2" {{ 'selected' if form_data and form_data.cholesterol == '2' }}>2 - Above Normal</option>
+                                <option value="3" {{ 'selected' if form_data and form_data.cholesterol == '3' }}>3 - High</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="gluc" class="form-label">Glucose Level</label>
+                            <select class="form-select" id="gluc" name="gluc" required>
+                                <option value="" disabled {{ 'selected' if not form_data or not form_data.gluc }}>Select...</option>
+                                <option value="1" {{ 'selected' if form_data and form_data.gluc == '1' }}>1 - Normal</option>
+                                <option value="2" {{ 'selected' if form_data and form_data.gluc == '2' }}>2 - Above Normal</option>
+                                <option value="3" {{ 'selected' if form_data and form_data.gluc == '3' }}>3 - High</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header"><strong>Lifestyle Factors</strong></div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="smoke" class="form-label">Smoking</label>
+                            <select class="form-select" id="smoke" name="smoke" required>
+                                <option value="" disabled {{ 'selected' if not form_data or not form_data.smoke }}>Select...</option>
+                                <option value="0" {{ 'selected' if form_data and form_data.smoke == '0' }}>No</option>
+                                <option value="1" {{ 'selected' if form_data and form_data.smoke == '1' }}>Yes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="alco" class="form-label">Alcohol Intake</label>
+                            <select class="form-select" id="alco" name="alco" required>
+                                <option value="" disabled {{ 'selected' if not form_data or not form_data.alco }}>Select...</option>
+                                <option value="0" {{ 'selected' if form_data and form_data.alco == '0' }}>No</option>
+                                <option value="1" {{ 'selected' if form_data and form_data.alco == '1' }}>Yes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="active" class="form-label">Physical Activity</label>
+                            <select class="form-select" id="active" name="active" required>
+                                <option value="" disabled {{ 'selected' if not form_data or not form_data.active }}>Select...</option>
+                                <option value="1" {{ 'selected' if form_data and form_data.active == '1' }}>Yes</option>
+                                <option value="0" {{ 'selected' if form_data and form_data.active == '0' }}>No</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg w-100">Assess CVD Risk</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

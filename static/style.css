@@ -1,0 +1,48 @@
+/* CardioRisk Predictor - Custom Styles */
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* Risk result banners */
+.risk-low {
+    background-color: #d4edda;
+    border: 2px solid #2ecc71;
+    color: #155724;
+}
+
+.risk-high {
+    background-color: #f8d7da;
+    border: 2px solid #e74c3c;
+    color: #721c24;
+}
+
+.risk-low h1 {
+    color: #2ecc71;
+}
+
+.risk-high h1 {
+    color: #e74c3c;
+}
+
+/* Feature importance bars */
+.importance-bar {
+    background: linear-gradient(90deg, #3498db, #2980b9);
+}
+
+/* Card styling */
+.card-header {
+    background-color: #f8f9fa;
+}
+
+/* Navbar brand */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.3rem;
+}
